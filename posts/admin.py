@@ -1,9 +1,11 @@
 from django.contrib import admin
 from posts.models import Post
 
+
 class Posts(admin.ModelAdmin):
-    list_display = ('id', 'title', 'content', 'author', 'created')
-    list_display_links = ('id', 'author')
-    search_fields = ('id', 'author')
+    list_display = ("id", "title", "content", "author", "created")
+    list_display_links = ("id", "author")
+    search_fields = ("id", "author")
+
 
 admin.site.register(Post, Posts)
