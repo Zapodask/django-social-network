@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-!hq%$sqx3a*r5b&zn2kt^%iqo*rs+643*-^&x&mcb@q%0o%d&3"
+SECRET_KEY = "django-insecure-62ah(t8_g&u-5$rd1udehbxh#1@**x6864m9w6=v6x1f@bp%k$"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    # Local
     "users.apps.UsersConfig",
     "posts.apps.PostsConfig",
 ]
@@ -101,15 +102,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
-
-# Rest framework
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication"
-    )
-}
 
 
 # Internationalization
