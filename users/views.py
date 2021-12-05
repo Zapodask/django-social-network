@@ -5,7 +5,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import User
-from users.serializer import UserSerializer
+from users.serializer import UserSerializer, FriendsSerializer
 
 
 def get_object(id):
@@ -48,3 +48,17 @@ def DeleteUser(request):
     user = get_object(request.user.id)
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def AddFriend(request):
+    data = request.data
+    data["owner"] = request.user.id
+    serializer = FriendsSerializer(data=data)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

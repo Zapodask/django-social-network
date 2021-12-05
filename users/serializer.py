@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
-import django.contrib.auth.password_validation as validators
 
-from users.models import User
+from users.models import User, Friends
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,10 +12,12 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
+            "date_joined",
         ]
 
         extra_kwargs = {
             "password": {"write_only": True},
+            "date_joined": {"read_only": True},
         }
 
     def create_user(self, instance, validated_data):
@@ -37,3 +38,12 @@ class UserSerializer(serializers.ModelSerializer):
             data["password"] = make_password(data["password"])
 
             return data
+
+
+class FriendsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Friends
+        fields = [
+            "owner",
+            "users",
+        ]
