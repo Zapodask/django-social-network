@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 
-from users.models import User
+from users.models import User, Friends
 from users.serializer import UserSerializer, FriendsSerializer
 
 
@@ -39,6 +39,7 @@ def RegisterUser(request):
 def GetUser(request, id):
     user = get_object(id)
     serializer = UserSerializer(user)
+    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -52,13 +53,55 @@ def DeleteUser(request):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def AddFriend(request):
+def AddFriends(request):
     data = request.data
-    data["owner"] = request.user.id
-    serializer = FriendsSerializer(data=data)
+    data_users = data.get("users")
+    user_id = request.user.id
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    data["owner"] = user_id
+
+    try:
+        friends = Friends.objects.get(owner=user_id)
+
+        for user in friends.users.all():
+            for data_user in data_users:
+                if user.id == data_user:
+                    return Response(
+                        f"you are already friends with user {user.username}",
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+        for user in data_users:
+            friends.users.add(user)
+
+        serializer = FriendsSerializer(friends)
+
+        return Response(serializer.data)
+    except Friends.DoesNotExist:
+        serializer = FriendsSerializer(data=data)
+
+        if serializer.is_valid() and user_id not in serializer.data.get("users"):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def RemoveFriends(request):
+    data = request.data
+    data_users = data.get("users")
+    user_id = request.user.id
+
+    try:
+        friends = Friends.objects.get(owner=user_id)
+
+        for user in data_users:
+            friends.users.remove(user)
+
+        serializer = FriendsSerializer(friends)
+
+        return Response(serializer.data)
+    except Friends.DoesNotExist:
+        return Response("You do not have friends", status=status.HTTP_400_BAD_REQUEST)

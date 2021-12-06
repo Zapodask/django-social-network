@@ -4,7 +4,14 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from users.views import ListUsers, RegisterUser, DeleteUser, GetUser, AddFriend
+from users.views import (
+    ListUsers,
+    RegisterUser,
+    DeleteUser,
+    GetUser,
+    AddFriends,
+    RemoveFriends,
+)
 
 
 urlpatterns = [
@@ -12,7 +19,8 @@ urlpatterns = [
     path("register", RegisterUser),
     path("<int:id>", GetUser),
     path("delete-my-user", DeleteUser),
-    path("add-friend", AddFriend),
+    path("add-friends", AddFriends),
+    path("remove-friends", RemoveFriends),
     path("login", TokenObtainPairView.as_view()),
     path("refresh-token", TokenRefreshView.as_view()),
 ]

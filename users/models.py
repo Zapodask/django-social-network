@@ -7,8 +7,9 @@ class User(AbstractUser):
 
 
 class Friends(models.Model):
-    owner = models.ManyToManyField(
+    owner = models.OneToOneField(
         User,
+        on_delete=models.CASCADE,
         related_name="friends",
     )
     users = models.ManyToManyField(

@@ -7,13 +7,7 @@ from users.models import User, Friends
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            "id",
-            "username",
-            "email",
-            "password",
-            "date_joined",
-        ]
+        fields = "__all__"
 
         extra_kwargs = {
             "password": {"write_only": True},
@@ -47,3 +41,8 @@ class FriendsSerializer(serializers.ModelSerializer):
             "owner",
             "users",
         ]
+
+        def update_friends(self, instance, validated_data):
+            instance.users = instance.users.pop(validated_data.users.value)
+
+            return instance
