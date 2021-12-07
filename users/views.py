@@ -39,7 +39,6 @@ def RegisterUser(request):
 def GetUser(request, id):
     user = get_object(id)
     serializer = UserSerializer(user)
-    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -49,6 +48,15 @@ def DeleteUser(request):
     user = get_object(request.user.id)
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def GetFriends(request, id):
+    friends = Friends.objects.get(owner=id)
+    serializer = FriendsSerializer(friends)
+
+    return Response(serializer.data)
 
 
 @api_view(["PUT"])
